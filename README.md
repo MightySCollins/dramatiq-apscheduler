@@ -30,20 +30,27 @@ Currently only one trigger is supported `crontab`. We recommend you use https://
 Just run the task to start the process. You can also add the `--debug` flag to get extra logging.
 
 ```
-Usage: dapscheduler [OPTIONS] CONFIGFILE
+Usage: dramatiq_apscheduler [OPTIONS] CONFIGFILE
 
 Options:
-  --debug          Enables debug logging
-  --rabbitmq TEXT  rabbitmq connection url: amqp://127.0.0.1:5672/
-  --redis TEXT     redis connection url: redis://localhost/
-  --help           Show this message and exit.
+  --debug           Enables debug logging
+  --rabbitmq TEXT   rabbitmq connection url: amqp://127.0.0.1:5672/
+  --redis TEXT      redis connection url: redis://localhost/
+  --sticky INTEGER  How long a process should stay the leader
+  --help            Show this message and exit.
 ```
 
 You can run with the demo config:
 
-    dapscheduler config.yaml
+    dramatiq_apscheduler config.yaml
     
 ## Development
 The easiest way to develop this application is in a venv. You can see more details in the [click documentation](https://click.palletsprojects.com/en/7.x/setuptools/) but if your venv is setup just run the below command.
  
      pip install --editable .
+
+## Dockerfile
+A docker image is also provided which allows you to easily run the application anywhere.
+
+    docker pull scollins/dramatiq-apscheduler
+    docker run scollins/dramatiq-apscheduler

@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name='dramatiq-apscheduler',
-    version='0.3',
+    version='0.0.1',
     packages=find_packages(),
     py_modules=['dramatiq_apscheduler'],
     author="Sam Collins",

@@ -19,9 +19,8 @@ PROCESS_KEY = f"{platform.node()}-{os.getpid()}"
 logging.basicConfig(
     level=logging.INFO,
     format=f"%(asctime)s [%(levelname)-5.5s] {PROCESS_KEY}  %(message)s",
-    handlers=[
-        logging.StreamHandler()
-    ])
+    handlers=[logging.StreamHandler()],
+)
 
 logging.getLogger("pika").setLevel(logging.CRITICAL)
 
@@ -35,12 +34,14 @@ def dummy_job(**kwargs):
     return
 
 
-def add_all_jobs(scheduler, jobs, grace_time=280):
+def add_all_jobs(scheduler, jobs):
     for name, options in jobs.items():
         if "crontab" in options:
             trigger = CronTrigger.from_crontab(options["crontab"])
         else:
-            logger.warning(f"No trigger specified for {name}. Task will run immediatly")
+            logger.warning(
+                f"No trigger specified for {name}. Task will run immediately"
+            )
             trigger = None
 
         try:
@@ -48,7 +49,7 @@ def add_all_jobs(scheduler, jobs, grace_time=280):
             kwargs["func"] = options["func"]
             kwargs["queue_name"] = options.get("queue_name", "default")
         except KeyError:
-            raise ClickException("Config file missing required paramter")
+            raise ClickException("Config file missing required parameter")
 
         scheduler.add_job(
             id=name,
@@ -61,11 +62,20 @@ def add_all_jobs(scheduler, jobs, grace_time=280):
 
 
 @click.command()
-@click.argument('configfile', type=click.File('r'))
-@click.option('--debug', is_flag=True, help="Enables debug logging")
-@click.option('--rabbitmq', default=None, help="rabbitmq connection url: amqp://127.0.0.1:5672/")
-@click.option('--redis', default="redis://localhost/", help="redis connection url: redis://localhost/")
-def schedule(configfile, debug, rabbitmq, redis):
+@click.argument("configfile", type=click.File("r"))
+@click.option("--debug", is_flag=True, help="Enables debug logging")
+@click.option(
+    "--rabbitmq", default=None, help="rabbitmq connection url: amqp://127.0.0.1:5672/"
+)
+@click.option(
+    "--redis",
+    default="redis://localhost/",
+    help="redis connection url: redis://localhost/",
+)
+@click.option(
+    "--sticky", default=280, type=int, help="How long a process should stay the leader"
+)
+def schedule(configfile, debug, rabbitmq, redis, sticky):
     try:
         config = yaml.safe_load(configfile)
     except yaml.YAMLError as e:
@@ -80,13 +90,13 @@ def schedule(configfile, debug, rabbitmq, redis):
         logger.debug("Debug logging enabled")
         logging.getLogger("apscheduler").setLevel(logging.DEBUG)
 
-    executors = {
-        'default': DramatiqExecutor()
-    }
-    scheduler = RedisBlockingScheduler(executors=executors, timezone=utc, endpoint_url=redis)
-    add_all_jobs(scheduler, config['jobs'])
+    executors = {"default": DramatiqExecutor()}
+    scheduler = RedisBlockingScheduler(
+        executors=executors, timezone=utc, endpoint_url=redis, sticky_time=sticky
+    )
+    add_all_jobs(scheduler, config["jobs"])
     scheduler.start()
 
 
 def cli():
-    schedule(auto_envvar_prefix='SCHEDULE')
+    schedule(auto_envvar_prefix="SCHEDULE")
