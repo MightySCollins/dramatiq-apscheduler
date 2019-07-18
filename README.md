@@ -50,7 +50,7 @@ The easiest way to develop this application is in a venv. You can see more detai
      pip install --editable .
 
 ## Dockerfile
-A docker image is also provided which allows you to easily run the application anywhere.
+A [docker image](https://hub.docker.com/r/scollins/dramatiq-apscheduler) is also provided which allows you to easily run the application anywhere.
 
     docker pull scollins/dramatiq-apscheduler
     docker run scollins/dramatiq-apscheduler

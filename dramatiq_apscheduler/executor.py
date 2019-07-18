@@ -44,7 +44,7 @@ def run_job(job, jobstore_alias, run_times, logger_name, broker):
                     actor_name=func,
                     args=job.args,
                     kwargs=kwargs,
-                    options={},
+                    options={"max_retries": 0},
                 )
             )
         except BaseException:

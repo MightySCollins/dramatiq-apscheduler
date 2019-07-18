@@ -8,10 +8,10 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(
-    name='dramatiq-apscheduler',
-    version='0.0.1',
+    name="dramatiq-apscheduler",
+    version="0.0.2",
     packages=find_packages(),
-    py_modules=['dramatiq_apscheduler'],
+    py_modules=["dramatiq_apscheduler"],
     author="Sam Collins",
     url="https://github.com/MightySCollins/dramatiq-apscheduler/",
     classifiers=[
@@ -23,16 +23,16 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     install_requires=[
-        'Click',
-        'pyyaml',
-        'apscheduler',
-        'dramatiq',
-        'pytz',
-        'pika',
-        'redis'
+        "Click",
+        "pyyaml",
+        "apscheduler",
+        "dramatiq",
+        "pytz",
+        "pika",
+        "redis",
     ],
-    entry_points='''
+    entry_points="""
         [console_scripts]
         dramatiq_apscheduler=dramatiq_apscheduler.main:cli
-    ''',
+    """,
 )
