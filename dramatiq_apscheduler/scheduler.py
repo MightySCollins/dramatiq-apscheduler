@@ -30,7 +30,7 @@ class RedisBlockingScheduler(BlockingScheduler):
 
     def start(self, *args, **kwargs):
         self.r = Redis.from_url(self.endpoint_url)
-        self.current_leader = self.check_check_leader()
+        self.current_leader = self.check_current_leader()
         super().start(*args, **kwargs)
 
     def _main_loop(self):
@@ -38,7 +38,7 @@ class RedisBlockingScheduler(BlockingScheduler):
         while self.state != STATE_STOPPED:
             self._event.wait(wait_seconds)
             self._event.clear()
-            self.current_leader = self.check_check_leader()
+            self.current_leader = self.check_current_leader()
             wait_seconds = self._process_jobs()
 
     def _lookup_executor(self, alias):
@@ -49,7 +49,7 @@ class RedisBlockingScheduler(BlockingScheduler):
             return super()._lookup_executor(alias)
         return DummyExecutor()
 
-    def check_check_leader(self) -> bool:
+    def check_current_leader(self) -> bool:
         current_leader = self.r.get(CACHE_KEY)
         if current_leader is None:
             self.r.set(CACHE_KEY, PROCESS_KEY, 1)

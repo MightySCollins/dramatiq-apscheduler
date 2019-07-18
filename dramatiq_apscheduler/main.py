@@ -88,5 +88,5 @@ def schedule(configfile, debug, rabbitmq, redis):
     scheduler.start()
 
 
-def main():
+def cli():
     schedule(auto_envvar_prefix='SCHEDULE')
