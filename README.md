@@ -3,16 +3,24 @@ Allows simple command line usage of ApScheduler to add tasks directly to Dramati
 
 You can run multiple process and each one will check if it's the leader before executing any tasks.
 
+## Requirements
+The application uses rabbitmq and redis.
+
+By default both rabbitmq and redis will just use localhost but on most systems you are running these services on another server. You can configure both redis and rabbitmq by providing the connection urls as options `redis` and `rabbitmq` or environment variables `SCHEDULE_REDIS` and `SCHEDULE_RABBITMQ`.
+
 ## Config
-Below is a minimal example of the config.
+Below is a minimal example of the config. To add more tasks just simply edit the `jobs` config option.  
  
 ```yaml
-config:
-  redis: redis://localhost/
 jobs:
   trigger_feed_run_every_10_minutes:
     func: run_feeds
     crontab: "*/10 * * * *"
+  trigger_test_task:
+    func: test_task
+    crontab: "*/1 * * * *"
+    queue_name: test
+
 ```
 
 ### Triggers
@@ -21,4 +29,21 @@ Currently only one trigger is supported `crontab`. We recommend you use https://
 ## Usage
 Just run the task to start the process. You can also add the `--debug` flag to get extra logging.
 
-    dramatiq_apscheduler config.yaml
+```
+Usage: dapscheduler [OPTIONS] CONFIGFILE
+
+Options:
+  --debug          Enables debug logging
+  --rabbitmq TEXT  rabbitmq connection url: amqp://127.0.0.1:5672/
+  --redis TEXT     redis connection url: redis://localhost/
+  --help           Show this message and exit.
+```
+
+You can run with the demo config:
+
+    dapscheduler config.yaml
+    
+## Development
+The easiest way to develop this application is in a venv. You can see more details in the [click documentation](https://click.palletsprojects.com/en/7.x/setuptools/) but if your venv is setup just run the below command.
+ 
+     pip install --editable .

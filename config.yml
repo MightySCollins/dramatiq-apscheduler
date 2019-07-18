@@ -1,24 +1,5 @@
 jobs:
-  trigger_feed_run_every_10_minutes:
-    func: run_feeds
-    crontab: "*/10 * * * *"
-  trigger_refresh_latest_prices:
-    func: run_latestprice
-    crontab: "*/30 * * * *"
-  trigger_product_capacities:
-    func: run_product_capacities
-    crontab: "*/30 * * * *"
-  trigger_refresh_popular_products:
-    func: run_popular_products
-    crontab: "0 * * * *"
-  trigger_feed_run_every_3_hours:
-    func: run_feeds
-    crontab: "10 */3 * * *"
-    kwargs:
-      refresh_group: 3-hours
-  trigger_clean_bank_details:
-    func: clean_bank_details
-    crontab: "35 9 * * *"
-  trigger_hash_bank_details:
-    func: run_popular_products
-    crontab: "0 10 * * *"
+  trigger_test_task:
+    func: test_task
+    crontab: "*/1 * * * *"
+    queue_name: test

@@ -15,6 +15,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        dramatiq_apscheduler=dramatiq_apscheduler.main:schedule
+        dapscheduler=dramatiq_apscheduler.main:main
     ''',
 )

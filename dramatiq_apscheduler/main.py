@@ -5,6 +5,8 @@ import yaml
 import logging
 
 from click import ClickException
+from dramatiq import set_broker
+from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from pytz import utc
 
 from apscheduler.triggers.cron import CronTrigger
@@ -27,6 +29,9 @@ logger = logging.getLogger("dramatiq_apscheduler")
 
 
 def dummy_job(**kwargs):
+    """
+    We need to provide apscheduler a valid function for it to check in add_job
+    """
     return
 
 
@@ -57,12 +62,18 @@ def add_all_jobs(scheduler, jobs, grace_time=280):
 
 @click.command()
 @click.argument('configfile', type=click.File('r'))
-@click.option('--debug', is_flag=True)
-def schedule(configfile, debug):
+@click.option('--debug', is_flag=True, help="Enables debug logging")
+@click.option('--rabbitmq', default=None, help="rabbitmq connection url: amqp://127.0.0.1:5672/")
+@click.option('--redis', default="redis://localhost/", help="redis connection url: redis://localhost/")
+def schedule(configfile, debug, rabbitmq, redis):
     try:
         config = yaml.safe_load(configfile)
     except yaml.YAMLError as e:
         raise ClickException(f"Yaml config file is invalid: {e}")
+
+    if rabbitmq:
+        rabbitmq_broker = RabbitmqBroker(url=rabbitmq)
+        set_broker(rabbitmq_broker)
 
     if debug:
         logger.setLevel(logging.DEBUG)
@@ -72,6 +83,10 @@ def schedule(configfile, debug):
     executors = {
         'default': DramatiqExecutor()
     }
-    scheduler = RedisBlockingScheduler(executors=executors, timezone=utc)
+    scheduler = RedisBlockingScheduler(executors=executors, timezone=utc, endpoint_url=redis)
     add_all_jobs(scheduler, config['jobs'])
     scheduler.start()
+
+
+def main():
+    schedule(auto_envvar_prefix='SCHEDULE')
