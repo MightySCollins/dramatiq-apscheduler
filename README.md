@@ -6,7 +6,7 @@ You can run multiple process and each one will check if it's the leader before e
 ## Requirements
 The application uses rabbitmq and redis.
 
-By default both rabbitmq and redis will just use localhost but on most systems you are running these services on another server. You can configure both redis and rabbitmq by providing the connection urls as options `redis` and `rabbitmq` or environment variables `SCHEDULE_REDIS` and `SCHEDULE_RABBITMQ`.
+By default both rabbitmq and redis will just use localhost but on most systems you are running these services on another server. You can configure both redis and rabbitmq by providing the connection urls as options `redis_url` and `rabbitmq` or environment variables `SCHEDULE_REDIS_URL` and `SCHEDULE_RABBITMQ`.
 
 ## Config
 Below is a minimal example of the config. To add more tasks just simply edit the `jobs` config option.  
@@ -20,7 +20,6 @@ jobs:
     func: test_task
     crontab: "*/1 * * * *"
     queue_name: test
-
 ```
 
 ### Triggers
@@ -30,13 +29,13 @@ Currently only one trigger is supported `crontab`. We recommend you use https://
 Just run the task to start the process. You can also add the `--debug` flag to get extra logging.
 
 ```
-Usage: dramatiq_apscheduler [OPTIONS] CONFIGFILE
+Usage: dramatiq_apscheduler [OPTIONS] TASK_FILE
 
 Options:
   --debug           Enables debug logging
   --rabbitmq TEXT   rabbitmq connection url: amqp://127.0.0.1:5672/
-  --redis TEXT      redis connection url: redis://localhost/
-  --sticky INTEGER  How long a process should stay the leader
+  --redis_url TEXT  redis connection url: redis://localhost/
+  --expire INTEGER  How long the lock should last for
   --help            Show this message and exit.
 ```
 

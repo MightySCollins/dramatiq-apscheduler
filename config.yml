@@ -3,3 +3,7 @@ jobs:
     func: test_task
     crontab: "*/1 * * * *"
     queue_name: test
+    args:
+      - 123
+    kwargs:
+      thing: thing

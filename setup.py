@@ -30,6 +30,7 @@ setup(
         "pytz",
         "pika",
         "redis",
+        "python-redis-lock"
     ],
     entry_points="""
         [console_scripts]
