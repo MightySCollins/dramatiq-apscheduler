@@ -59,8 +59,8 @@ def add_all_jobs(scheduler, jobs):
 )
 @click.option(
     "--redis_url",
-    default="redis://localhost/",
-    help="redis connection url: redis://localhost/",
+    default=None,
+    help="redis connection url. eg: redis://localhost/",
 )
 @click.option(
     "--expire", default=60, type=int, help="How long the lock should last for"
@@ -85,6 +85,9 @@ def schedule(task_file, debug, rabbitmq, redis_url, expire):
     except KeyError as e:
         raise ClickException(f"Config file missing required parameter: {e.args}")
 
+    if not redis_url:
+        scheduler.start()
+        return
     conn = redis.Redis.from_url(redis_url)
     with redis_lock.Lock(conn, LOCK_NAME, id=PROCESS_KEY, expire=expire, auto_renewal=True):
         scheduler.start()
