@@ -48,6 +48,7 @@ def add_all_jobs(scheduler, jobs):
             },
             trigger=trigger,
             replace_existing=True,
+            misfire_grace_time=10
         )
 
 
