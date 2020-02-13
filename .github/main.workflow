@@ -1,12 +1,22 @@
-workflow "New workflow" {
-  resolves = ["Publish Python Package"]
-  on = "push"
-}
+name: Publish python package
 
-action "Publish Python Package" {
-  uses = "mariamrf/py-package-publish-action@v0.0.2"
-  secrets = ["TWINE_USERNAME", "TWINE_PASSWORD"]
-  env = {
-    PYTHON_VERSION = "3.7.0"
-  }
-}
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
+    - name: Install dependencies
+      run: pip install wheel
+    - name: Build package
+      run: python setup.py sdist bdist_wheel
+    - name: Publish package
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}
